@@ -1,4 +1,4 @@
 streamlit
-weasyprint
-pillow
+playwright
 openpyxl
+pillow
