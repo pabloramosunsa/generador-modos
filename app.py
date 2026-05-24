@@ -1,15 +1,18 @@
+import streamlit as st
 import subprocess
+
 @st.cache_resource
 def install_playwright():
     subprocess.run(["playwright", "install", "chromium"])
 
 install_playwright()
-import streamlit as st
+
 import os
 import asyncio
 from playwright.async_api import async_playwright
 import datetime
 import base64
+
 from io import BytesIO
 
 # Librerías para generación de Excel Técnico
