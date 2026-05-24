@@ -1,9 +1,16 @@
+import subprocess
+@st.cache_resource
+def install_playwright():
+    subprocess.run(["playwright", "install", "chromium"])
+
+install_playwright()
 import streamlit as st
 import os
+import asyncio
+from playwright.async_api import async_playwright
 import datetime
 import base64
 from io import BytesIO
-from weasyprint import HTML
 
 # Librerías para generación de Excel Técnico
 import openpyxl
@@ -676,8 +683,19 @@ HTML_TEMPLATE = """
 </html>
 """
 
-def generate_pdf(html_content, output_path):
-    HTML(string=html_content).write_pdf(output_path)
+async def generate_pdf(html_content, output_path):
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
+    headless=True,
+    args=[
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+    ]
+)
+        page = await browser.new_page()
+        await page.set_content(html_content)
+        await page.pdf(path=output_path, format="A4", print_background=True)
+        await browser.close()
 
 # --- COMPILACIÓN ---
 st.markdown("---")
@@ -791,7 +809,7 @@ if st.button("✅ COMPILAR REPORTE (PDF y Excel)"):
             html_f = html_f.replace("__MENSAJE_SEGURIDAD__", msg_pdf)
             
             pdf_out = f"Ficha_LOTO_Integral_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-            generate_pdf(html_f, pdf_out)
+            asyncio.run(generate_pdf(html_f, pdf_out))
             
             # --- GENERACIÓN DE EXCEL TÉCNICO AVANZADO ---
             from openpyxl.drawing.image import Image as XLImage
