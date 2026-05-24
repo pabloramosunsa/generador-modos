@@ -1,5 +1,4 @@
 streamlit
-playwright
+weasyprint
 pillow
 openpyxl
-asyncio
