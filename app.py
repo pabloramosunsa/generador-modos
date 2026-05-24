@@ -11,6 +11,11 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
+# --- INSTALACIÓN AUTOMÁTICA DE NAVEGADOR PARA STREAMLIT CLOUD ---
+if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
+    os.system("playwright install chromium")
+
+
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="LOTO OS Engine Matrix v4", layout="wide", initial_sidebar_state="collapsed")
 
@@ -677,13 +682,18 @@ HTML_TEMPLATE = """
 </html>
 """
 
-async def generate_pdf(html_content, output_path):
+async async def generate_pdf(html_content, output_path):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        # Añadimos --no-sandbox para compatibilidad con contenedores Linux
+        browser = await p.chromium.launch(
+            headless=True, 
+            args=["--no-sandbox", "--disable-setuid-sandbox"]
+        )
         page = await browser.new_page()
         await page.set_content(html_content)
         await page.pdf(path=output_path, format="A4", print_background=True)
         await browser.close()
+
 
 # --- COMPILACIÓN ---
 st.markdown("---")
