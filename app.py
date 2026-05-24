@@ -682,7 +682,7 @@ HTML_TEMPLATE = """
 </html>
 """
 
-async async def generate_pdf(html_content, output_path):
+async def generate_pdf(html_content, output_path):
     async with async_playwright() as p:
         # Añadimos --no-sandbox para compatibilidad con contenedores Linux
         browser = await p.chromium.launch(
