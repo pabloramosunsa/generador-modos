@@ -1,18 +1,9 @@
 import streamlit as st
 import os
-import asyncio
-from playwright.sync_api import sync_playwright
 import datetime
 import base64
 from io import BytesIO
-
-# --- INSTALACIÓN AUTOMÁTICA DE NAVEGADOR PARA STREAMLIT CLOUD ---
-if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
-    try:
-        import subprocess
-        subprocess.run(["playwright", "install", "chromium"], check=True)
-    except Exception as e:
-        st.error(f"Error instalando navegador: {e}")
+from weasyprint import HTML
 
 # Librerías para generación de Excel Técnico
 import openpyxl
@@ -686,26 +677,7 @@ HTML_TEMPLATE = """
 """
 
 def generate_pdf(html_content, output_path):
-    with sync_playwright() as p:
-        # Añadimos argumentos de compatibilidad para entornos de nube (Linux/Docker)
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
-                "--no-sandbox", 
-                "--disable-setuid-sandbox", 
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--no-zygote",
-                "--single-process"
-            ]
-        )
-        context = browser.new_context()
-        page = context.new_page()
-        page.set_content(html_content)
-        # Pequeña espera para renderizado
-        page.wait_for_timeout(2000)
-        page.pdf(path=output_path, format="A4", print_background=True)
-        browser.close()
+    HTML(string=html_content).write_pdf(output_path)
 
 # --- COMPILACIÓN ---
 st.markdown("---")
