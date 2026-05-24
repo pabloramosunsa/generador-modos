@@ -6,15 +6,17 @@ import datetime
 import base64
 from io import BytesIO
 
+# --- INSTALACIÓN AUTOMÁTICA DE NAVEGADOR PARA STREAMLIT CLOUD ---
+try:
+    import subprocess
+    subprocess.run(["playwright", "install", "chromium"], check=True)
+except Exception as e:
+    st.error(f"Error instalando navegador: {e}")
+
 # Librerías para generación de Excel Técnico
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
-
-# --- INSTALACIÓN AUTOMÁTICA DE NAVEGADOR PARA STREAMLIT CLOUD ---
-if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
-    os.system("playwright install chromium")
-
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="LOTO OS Engine Matrix v4", layout="wide", initial_sidebar_state="collapsed")
@@ -684,16 +686,17 @@ HTML_TEMPLATE = """
 
 async def generate_pdf(html_content, output_path):
     async with async_playwright() as p:
-        # Añadimos --no-sandbox para compatibilidad con contenedores Linux
+        # Añadimos argumentos de compatibilidad para entornos de nube (Linux/Docker)
         browser = await p.chromium.launch(
-            headless=True, 
-            args=["--no-sandbox", "--disable-setuid-sandbox"]
+            headless=True,
+            args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
         )
         page = await browser.new_page()
         await page.set_content(html_content)
+        # Esperar un poco para asegurar renderizado de imágenes
+        await asyncio.sleep(1)
         await page.pdf(path=output_path, format="A4", print_background=True)
         await browser.close()
-
 
 # --- COMPILACIÓN ---
 st.markdown("---")
