@@ -1,17 +1,18 @@
 import streamlit as st
 import os
 import asyncio
-from playwright.async_api import async_playwright
+from playwright.sync_api import sync_playwright
 import datetime
 import base64
 from io import BytesIO
 
 # --- INSTALACIÓN AUTOMÁTICA DE NAVEGADOR PARA STREAMLIT CLOUD ---
-try:
-    import subprocess
-    subprocess.run(["playwright", "install", "chromium"], check=True)
-except Exception as e:
-    st.error(f"Error instalando navegador: {e}")
+if not os.path.exists("/home/adminuser/.cache/ms-playwright"):
+    try:
+        import subprocess
+        subprocess.run(["playwright", "install", "chromium"], check=True)
+    except Exception as e:
+        st.error(f"Error instalando navegador: {e}")
 
 # Librerías para generación de Excel Técnico
 import openpyxl
@@ -684,19 +685,27 @@ HTML_TEMPLATE = """
 </html>
 """
 
-async def generate_pdf(html_content, output_path):
-    async with async_playwright() as p:
+def generate_pdf(html_content, output_path):
+    with sync_playwright() as p:
         # Añadimos argumentos de compatibilidad para entornos de nube (Linux/Docker)
-        browser = await p.chromium.launch(
+        browser = p.chromium.launch(
             headless=True,
-            args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            args=[
+                "--no-sandbox", 
+                "--disable-setuid-sandbox", 
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--no-zygote",
+                "--single-process"
+            ]
         )
-        page = await browser.new_page()
-        await page.set_content(html_content)
-        # Esperar un poco para asegurar renderizado de imágenes
-        await asyncio.sleep(1)
-        await page.pdf(path=output_path, format="A4", print_background=True)
-        await browser.close()
+        context = browser.new_context()
+        page = context.new_page()
+        page.set_content(html_content)
+        # Pequeña espera para renderizado
+        page.wait_for_timeout(2000)
+        page.pdf(path=output_path, format="A4", print_background=True)
+        browser.close()
 
 # --- COMPILACIÓN ---
 st.markdown("---")
@@ -810,7 +819,7 @@ if st.button("✅ COMPILAR REPORTE (PDF y Excel)"):
             html_f = html_f.replace("__MENSAJE_SEGURIDAD__", msg_pdf)
             
             pdf_out = f"Ficha_LOTO_Integral_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-            asyncio.run(generate_pdf(html_f, pdf_out))
+            generate_pdf(html_f, pdf_out)
             
             # --- GENERACIÓN DE EXCEL TÉCNICO AVANZADO ---
             from openpyxl.drawing.image import Image as XLImage
