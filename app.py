@@ -701,7 +701,7 @@ async def generate_pdf(html_content, output_path):
     ]
 )
         page = await browser.new_page()
-        await page.set_content(html_content)
+        await page.set_content(html_content, wait_until="networkidle")
         await page.pdf(path=output_path, format="A4", print_background=True)
         await browser.close()
 
