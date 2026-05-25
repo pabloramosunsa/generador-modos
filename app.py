@@ -527,11 +527,7 @@ HTML_TEMPLATE = """
     <style>
         @page { size: A4 portrait; margin: 10mm 8mm; }
         body {
-    font-family: "Liberation Sans", sans-serif;
-    color: #0f172a;
-    margin: 0;
-    line-height: 1.05;
-    font-size: 7.8pt;
+    font-family: monospace;
 }
         .header-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; border: 1.5pt solid #000; }
         .header-table td { border: 0.5pt solid #000; vertical-align: middle; padding: 5px; }
