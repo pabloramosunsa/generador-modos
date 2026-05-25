@@ -527,7 +527,7 @@ HTML_TEMPLATE = """
     <style>
         @page { size: A4 portrait; margin: 10mm 8mm; }
         body {
-    font-family: "Liberation Sans Narrow", "Liberation Sans", sans-serif;
+    font-family: sans-serif;
     font-size: 6.7pt;
     line-height: 0.95;
 }
