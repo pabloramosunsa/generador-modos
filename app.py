@@ -527,8 +527,8 @@ HTML_TEMPLATE = """
     <style>
         @page { size: A4 portrait; margin: 10mm 8mm; }
         body {
-    font-family: "DejaVu Sans Condensed", sans-serif;
-    font-size: 6.8pt;
+    font-family: "Helvetica", sans-serif;
+    font-size: 6.7pt;
     line-height: 0.95;
 }
         .header-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; border: 1.5pt solid #000; }
