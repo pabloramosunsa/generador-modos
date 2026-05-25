@@ -526,7 +526,7 @@ HTML_TEMPLATE = """
     <meta charset="UTF-8">
     <style>
         @page { size: A4 portrait; margin: 10mm 8mm; }
-        body { font-family: 'Inter', sans-serif; color: #0f172a; margin: 0; line-height: 1.2; font-size: 8.5pt; }
+        body { font-family: 'Tahoma', sans-serif; color: #0f172a; margin: 0; line-height: 1.2; font-size: 8.5pt; }
         .header-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; border: 1.5pt solid #000; }
         .header-table td { border: 0.5pt solid #000; vertical-align: middle; padding: 5px; }
         .header-logo { width: 20%; text-align: center; background-color: #fff; }
