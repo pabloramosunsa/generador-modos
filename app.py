@@ -528,7 +528,7 @@ HTML_TEMPLATE = """
         @page { size: A4 portrait; margin: 10mm 8mm; }
        body {
     font-family: Arial, Helvetica, "DejaVu Sans", "Liberation Sans", sans-serif;
-    font-size: 7.5pt;
+    font-size: 8pt;
     color: #000000;
     line-height: 1.2;
 }
